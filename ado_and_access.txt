@@ -1,0 +1,169 @@
+code #1 - find replace txt file content
+
+code #2 - ADO Database Connection
+
+<//! 1st solution //>
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>New Page 1</title>
+</head>
+
+<body>
+
+<%@ Language=VBScript %>
+<%
+Dim conn
+set conn = Server.CreateObject("ADODB.Connection")
+conn.Open("DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=" & _
+
+Server.MapPath("\northwind.mdb"))
+Dim strSQL, rs
+
+strSQL = "SELECT * FROM Employees"
+
+set rs=Server.CreateObject("ADODB.recordset")
+
+rs.Open strSQL, conn
+
+Response.Write "<h1>Connection Works!</h1>"
+
+Response.Write "<h2>Database Records Below</h2>"
+
+do until rs.EOF
+for each x in rs.Fields
+Response.Write(x.name)
+Response.Write(" = ")
+Response.Write(x.value & "<br />")
+next
+Response.Write("<br />")
+rs.MoveNext
+loop
+
+rs.close
+
+Set rs = Nothing
+
+conn.close
+
+Set conn = Nothing
+
+%>
+
+</body>
+
+</html>
+ 
+
+<//! 2nd solution //>
+<html>
+<body>
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open(Server.Mappath("/northwind.mdb"))
+set rs = Server.CreateObject("ADODB.recordset")
+rs.Open "SELECT * FROM Employees", conn
+
+do until rs.EOF
+for each x in rs.Fields
+Response.Write(x.name)
+Response.Write(" = ")
+Response.Write(x.value & "<br />")
+next
+Response.Write("<br />")
+rs.MoveNext
+loop
+
+rs.close
+conn.close
+%>
+
+</body>
+</html>
+
+
+code #3 - ADO Showing records in a table
+
+<!// Showing records in a table //>
+
+ 
+
+<html>
+<body>
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open(Server.Mappath("/northwind.mdb"))
+
+set rs = Server.CreateObject("ADODB.recordset")
+rs.Open "SELECT EmployeeID, SocialSecurityNumber FROM Employees", conn
+%>
+
+<table border="1" width="100%">
+<tr>
+<%for each x in rs.Fields
+response.write("<th align='left' bgcolor='#b0c4de'>" & x.name & "</th>")
+next%>
+</tr>
+<%do until rs.EOF%>
+<tr>
+<%for each x in rs.Fields%>
+<td><%Response.Write(x.value)%></td>
+<%next
+rs.MoveNext%>
+</tr>
+<%loop
+rs.close
+conn.close
+%>
+</table>
+
+</body>
+</html>
+
+
+code #4 - ADO Filtering
+
+<!// Filtering Data //>
+
+<html>
+<body>
+
+<%
+set conn=Server.CreateObject("ADODB.Connection")
+conn.Provider="Microsoft.Jet.OLEDB.4.0"
+conn.Open(Server.Mappath("/northwind.mdb"))
+
+set rs = Server.CreateObject("ADODB.recordset")
+rs.Open "SELECT EmployeeID, SocialSecurityNumber FROM Employees WHERE SocialSecurityNumber LIKE '1%'", conn
+%>
+
+<table border="1" width="100%">
+<tr>
+<%for each x in rs.Fields
+response.write("<th align='left' bgcolor='#b0c4de'>" & x.name & "</th>")
+next%>
+</tr>
+<%do until rs.EOF%>
+<tr>
+<%for each x in rs.Fields%>
+<td><%Response.Write(x.value)%></td>
+<%next
+rs.MoveNext%>
+</tr>
+<%loop
+rs.close
+conn.close
+%>
+</table>
+
+</body>
+</html>
+
+
+
+
