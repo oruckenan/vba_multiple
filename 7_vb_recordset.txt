@@ -1,0 +1,410 @@
+code #1 - Initializing a RecordSet (partially from http://www.functionx.com)
+
+  http://www.functionx.com/vbaccess/Lesson22.htm
+Index Next
+
+ 
+
+Initializing a Record Set
+
+Initializing a Record Set From a Table or Query
+
+With the Microsoft Access library, to create a Recordset object using a table or a query that is associated with a database, you can call the OpenRecordset() method of that database. The syntax of this method is:
+
+Set Variable = Database.OpenRecordset(Source[, Type [, Options [, Lockedits ]]])
+ 
+
+The Variable factor can be an Object you would have declared.
+
+The Database factor must represent a valid database. It can be the current database or another one.
+
+the Source, is the only required argument of this method. It is passed as a string. This can be the name of a table or a query. Here is an example:
+
+Private Sub cmdRstCustomers_Click()
+   Dim dbCustomers As Object
+   Dim rstCustomers As Object
+ 
+   Set dbCustomers = CurrentDb
+   Set rstCustomers = dbCustomers.OpenRecordset("Customers")
+ 
+End Sub
+ 
+
+When this method executes, it retrieves the records stored in a table or a query named Customers and creates a record set from it.
+
+ 
+
+It can be used to create a record set from the current database or from a closed database.
+
+ 
+
+Opening a Record Set
+
+recordset.Open Source, ActiveConnection, CursorType, LockType, Options
+All arguments are optional.
+
+·        you can call the method without any argument using the following syntax:
+
+recordset.Open
+ 
+
+·        The first argument, Source, can be a SQL statement that will be used to select the records. Here is an example:
+
+Private Sub cmdAnalyzeVideos_Click()
+    Dim rstVideos As ADODB.Recordset
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Open "SELECT Title, Director, CopyrightYear, Rating FROM Videos"
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+·        The source can also include an optional WHERE condition that specifies what records would be considered.
+
+·        Instead of calling the Open() method version that expects the argument, you can first specify the source of data. To support this, the Recordset object is equipped with a property named Source that is of type String and that can receive the string of the data source. Here is an example of using it:
+
+Private Sub cmdVideoAnalyze_Click()
+    Dim rstVideos As ADODB.Recordset
+    Dim fldEach As ADODB.Field
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Source = "SELECT Title, Director, CopyrightYear, Rating FROM Videos"
+    
+    rstVideos.Open
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+ 
+
+The second argument of the Recordset.Open() method, ActiveConnection, specifies the connection through which the record set will be accessed. It can be a connection as those we have seen in the previous lessons. Here is an example that uses the connection to the current database:
+
+Private Sub cmdAnalyzeVideos_Click()
+    Dim rstVideos As ADODB.Recordset
+    Dim fldEach As ADODB.Field
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Open "SELECT Title, Director, CopyrightYear, Rating FROM Videos", Application.CodeProject.Connection
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+The third argument specifies the type of cursor that will manage the access to the record set.
+
+ 
+
+Private Sub cmdVideoAnalyze_Click()
+    Dim rstVideos As ADODB.Recordset
+    Dim fldEach As ADODB.Field
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Source = "SELECT Title, Director, CopyrightYear, Rating FROM Videos"
+    rstVideos.ActiveConnection = Application.CodeProject.Connection
+    rstVideos.CursorType = adOpenStatic
+    
+    rstVideos.Open
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+The fourth argument, LockType, represents the type of locking system that will be applied on the record set. The available types are stored in an enumerator named LockTypeEnum. The members of this enumerator are those we reviewed earlier. Here is an example of passing the fourth argument:
+
+Private Sub cmdAnalyzeVideos_Click()
+    Dim rstVideos As ADODB.Recordset
+    Dim fldEach As ADODB.Field
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Open "SELECT Title, Director, CopyrightYear, Rating FROM Videos", _
+                   Application.CodeProject.Connection, _
+                   adOpenStatic, adLockOptimistic
+    
+    For Each fldEach In rstVideos.Fields
+        MsgBox fldEach.Name
+    Next
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+The last argument is used to identify the type of the Source argument. The values of this argument are members of an enumerator named CommandTypeEnum
+
+ 
+
+If the source is a SQL statement as we have used it so far, this argument can be pass as adCmdText. Here is an example:
+
+Private Sub cmdAnalyzeVideos_Click()
+    Dim rstVideos As ADODB.Recordset
+    Dim fldEach As ADODB.Field
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Open "SELECT Title, Director, CopyrightYear, Rating FROM Videos", _
+                   Application.CodeProject.Connection, _
+                   adOpenStatic, adLockOptimistic, adCmdText
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+My example – tested and working one
+
+ 
+
+With SQL
+
+ 
+
+Private Sub cmdAnalyzeSSK_Click()
+
+    'declaring variable for openin recordset
+
+    Dim rstSSK As ADODB.Recordset
+
+    'declaring variable for field
+
+    Dim fldEach As ADODB.Field
+
+   
+
+    Set rstSSK = New ADODB.Recordset
+
+    rstSSK.Open "SELECT [tblSSK].[ad], [tblSSK].[soyad], [tblSSK].[Meslek], [tblSSK].[KimlikNo] FROM [tblSSK];", Application.CodeProject.Connection, adOpenStatic, adLockOptimistic, adCmdText
+
+   
+
+    'the name of each column in a message box, one at a time
+
+    For Each fldEach In rstSSK.Fields
+
+        MsgBox fldEach.Name
+
+    Next
+
+ 
+
+    'closing recordset
+
+    rstSSK.Close
+
+    Set rstSSK = Nothing
+
+End Sub
+
+ 
+
+Without SQL
+
+ 
+
+Private Sub cmdAnalyzeSSK_Click()
+'declaring variable for openin recordset
+Dim rstSSK As ADODB.Recordset
+'declaring variable for field
+Dim fldEach As ADODB.Field
+Dim dbssk As Object
+
+Set rstSSK = New ADODB.Recordset
+rstSSK.Open "tblSSK", Application.CodeProject.Connection, adOpenStatic, adLockOptimistic, adCmdTable
+
+'the name of each column in a message box, one at a time
+For Each fldEach In rstSSK.Fields
+MsgBox fldEach.Name
+Next
+
+'closing recordset
+rstSSK.Close
+Set rstSSK = Nothing
+End Sub
+
+code #2 - Using a RecordSet (partially from http://www.functionx.com)
+
+ http://www.functionx.com/vbaccess/Lesson22.htm
+Index Next
+
+ 
+
+Using a Record Set
+
+The Fields of a Recordset 
+
+The Fields Collection
+
+The Open() method of a Recordset object, is used to select the records.
+The records are primarily identified by the columns that organize them.,
+each Recordset object of the libraries we have so far is equipped with a property named Fields, which is a collection of the columns of the record set.
+To identify the name of a column, the Field object is equipped with a property named Name.
+ 
+
+Private Sub cmdVideoData_Click()
+    Dim rstVideos As ADODB.Recordset
+    Dim fldEach As ADODB.Field
+    
+    Set rstVideos = New ADODB.Recordset
+    rstVideos.Open "Videos", _
+                   Application.CodeProject.Connection, _
+                   adOpenStatic, adLockOptimistic, adCmdTable
+    
+    For Each fldEach In rstVideos.Fields
+        MsgBox fldEach.Name
+    Next
+    
+    rstVideos.Close
+    Set rstVideos = Nothing
+End Sub
+ 
+
+Don't Move Beyond the Extremes
+
+Some, if not most operations require that you remain within the range of values of the record set. If you move below the first record record, you (actually the user) may receive an error. In the same way, if you move beyond the last record, you would receive an error. To assist you with checking whether you are in the first record, the Recordset object provides the BOF() method. This method returns a Boolean value as follows:
+
+If it returns TRUE, then you are currently positioned before the first record
+If it returns FALSE, then you are at or above the first record
+On the other hand, if you want to check whether you are at the highest position of the records, you can call the EOF() method of the Recordset object. It also returns a Boolean value as follows:
+
+If it returns TRUE, then you are currently positioned after the last record
+If it returns FALSE, then you are at or below the last record
+ 
+ 
+code #3 - Stored Procedures (partially from http://www.functionx.com)
+ 
+   http://www.functionx.com/vbaccess/Lesson22.htm
+Index
+
+Stored Procedures
+
+ 
+
+You can create a procedure and save it as an object. Although you may use the event of a button, a form, or another control to create the procedure, the object or control doesn't own the procedure. In fact, after creating the procedure, it becomes an object and you can access it from anywhere in the database. Also, the procedure is saved as an object (as done for a table, a query, or a form) and it is stored in the database. Because the procedure is stored as an object, it is referred to as a stored procedure.
+
+Like a view, a stored procedure is not represented in the Database window. This means that, after creating, you should be aware of its existence or you should find a way to know what stored procedures are available in your database.
+
+ 
+
+ 
+
+Private Sub cmdCreateProcedureChangeTableSSK_Click()
+
+    Dim conEmployees As ADODB.Connection
+
+    Dim strProcedure As String
+
+    Dim strProcedure2 As String
+
+    Dim strProcedure3 As String
+
+   
+
+    Set conEmployees = Application.CurrentProject.Connection
+
+    strProcedure = "CREATE PROCEDURE SetNewMinSalary11 " & _
+
+                    "(NewMinSalary Currency) " & _
+
+                   "AS " & _
+
+                   "Update tblSSK " & _
+
+                   "SET tip = NewMinSalary " & _
+
+                   "WHERE tip < NewMinSalary;"
+
+   
+
+    conEmployees.Execute strProcedure
+
+    conEmployees.Close
+
+ 
+
+End Sub
+
+------------------------------------------------------------------------------------------
+
+Private Sub cmdExecuteProcedure_Click()
+
+ 
+
+    Dim conEmployees As ADODB.Connection
+
+    Dim strProcedure As String
+
+   
+
+    Set conEmployees = Application.CurrentProject.Connection
+
+    strProcedure = "EXECUTE SetNewMinSalary11 56;"
+
+   
+
+    conEmployees.Execute strProcedure
+
+    conEmployees.Close
+
+ 
+
+End Sub
+
+code #4 - Characteristics Of recordset (partially from http://www.functionx.com)
+
+
+××
+  http://www.functionx.com/vbaccess/Lesson22.htm
+Index Next
+
+ 
+
+Characteristics of a Record Set
+
+Once the table has been created, it is considered a record set. You can use it as the contents of a Recordset object
+
+A Cursor
+
+Imagine you are working on a large database such as a bank application that has thousands or millions of records (such as thousands or millions of customers). If you want to perform an operation on the customers, you may have to deal with many or all records. You may also have to deal with the fact that other people are accessing the same records like you, at the same time.
+
+Normally, some operations don't require you to have access to all records, at least not all the time. When working on records, thus when creating a Recordset object, you can specify a way to isolate a range of records and deal only with that range. The range of records that you select is called a cursor.
+
+ 
+
+there are various types of cursors:
+
+A static cursor holds a constant set of records. If using a static cursor, every time you visit the record set, it shows the same records the way they were when you opened the record set. It would not show the changes that have taken place. This is why it is called a static cursor. A static cursor is appropriate if you are not interested to know what changes have taken place ever since you opened the record set.
+In ADO, a static cursor is represented with the adOpenStatic constant.
+A cursor is referred to as forward-only if it allows you to move forward through the records.  Also, suppose that either you only or other people besides you are working on the same record. If you make a change on the current record, the other people will be notified. If other people make a change on the current record, you also would know. In ADO, this type or cursor is represented by the adOpenForwardOnly constant.
+A cursor is called dynamic if it detects and shows all changes that are occurring in a record set, whether the changes are caused by you or by other people who are accessing the record set at the same time. This type of cursor is appropriate if you want to know, live, what is going on with the record set you are working with.
+In an ADO database, to specify a dynamic cursor, use the adOpenDynamic constant.
+A key set cursor creates and saves a key for each record that has been modified since the record set was opened. If you access the record, the key is used to check the data of the record set.
+A key set cursor is created using the adOpenKeyset constant.
+If you don't want to specify a cursor when creating a record set, you can use the adOpenUnspecified constant.
+ 
+
+The Lock Type
+
+ 
+
+Imagine that, after creating a record set and working on it, you want to control who else can have access to the records of the set you are using. To exercise this control, you can create a "lock". This allows you, for example, to prevent other people from changing the records until you have finished with them. To support locking, the ADO library provides various options:
+
+The below three scenarios allow a user to edit and/or update the records that are included in the set.
+The below two options assume that you would lock many records to apply the indicated scenarios
+1       When a computer connects to a database, its user may need to make changes to various records at the same time. For this type of scenario, when the user accesses the records, instead of monopolizing them and waiting for the user to finish an operation that could take long, you can download the records on the user's computer, and disconnect the user from the database. The user would then make the necessary changes. When the user is ready to commit the changes, you can then reconnect to the data source and submit the changes. This type of lock is referred to as batch optimistic. ADO supports this through a constant value named adLockBatchOptimistic
+
+2       You may have a database that a few different people access at the same time. If the database is small enough, which is the case for restricted environment, the likelihood of two people editing or updating the same record (at the same time) may be low. In this case, you can indicate that you want to lock the record only when necessary. In this case, you use what is referred to as optimistic locking. This is implemented using the adLockOptimistic value
+
+If you prefer to lock one record at a time, you can use what is referred to as pessimistic locking.
+3  This is done using the adLockPessimistic constant
+
+ 
+
+In some cases, you may want to prevent any editing or update on the records while the set is being accessed.
+1       In this case, you can set the records to read-only. To do this, you can lock the set using the adLockReadOnly lock
+
+If you don't want to specify the type of lock system to use on a record set, use the adLockUnspecified value
+ 

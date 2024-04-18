@@ -1,0 +1,26 @@
+Babam icin bilgisayar :
+
+Mail:
+
+Inbox - tikla
+
+Mesaj silme
+
+Delete ( mesaj silme ) tikla
+Yahoo mail`den Cikmak icin
+
+Sign out`a tikla
+pencereyi kapa
+sag alt kose tikla : yesil ikon iki defa
+disconnect`e tikla
+Internet`te arama
+
+internet explorer` ikonunu tikla
+adress kismins : www.google.com yaz
+google sayfasi acilacak
+kutunun (bos olan ekranin ortasindaki kutu) icine istedigin herhangi bir kelime yaz
+google`da ara tusuna bas
+arama sonuclari ekranda belirecek , her bir sonuc icin hem bir baslik yazisi ve icerik bilgileri cikacak
+ayrica alt kisimda web sitesi adresleri gozukecektir
+bu adreslerden birine veya basliklarin uzerine tiklayarak web sitelerine giris yapilabilir
+not: herhangi bir linke tiklayarak belirli adreslere gidilebilir ( link = yani uzerine gelindiginde el isareti cikan yazilar)
