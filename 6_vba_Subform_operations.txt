@@ -1,0 +1,56 @@
+code #1 - Subform_on_resetting_all_values
+
+'On resetting all values on a subform
+'source:
+'http://www.mail-archive.com/ms_access_professionals@yahoogroups.com/msg10359.html
+
+'by B. Mosca
+
+'Put an undo command above your code that hides the subform.
+
+'I'm assuming you are using an option group for the Incident. And I'm 
+'calling the sub form SubForm1.
+
+Private Sub grpIncident_AfterUpdate()
+If grpIncident = 2 then
+    me.SubForm1.form.Undo
+    me.SubForm1.form.visible = False
+ElseIf grpIncident = 1 then
+    me.SubForm2.form.Undo
+    me.SubForm2.form.visible = False
+
+...
+End Sub
+
+'> question:
+'> 
+'> Can all the values on a subform be reset at once.
+'> Example:
+'> Have a form with subforms,subforms get made visible or not visible
+'> depending on choice of a field(incident) on mainform.
+'> If the user makes a incident choice, starts entering data on the 
+'> subform made visible, then decides they are wrong, clicks to 
+'change 
+'> incident choice, gets another subform, the data from the first 
+'choice 
+'> is written to the record.
+'> I would like to reset all the values on that subform when it goes 
+'from 
+'> visible to not-visible.
+'> 
+
+code #2 - Subform operation
+
+'Visit the followiung link - the page is very good
+
+' http://msdn.microsoft.com/library/default.asp?url=/library/en-us/dnsmart03/html/sa03c1.asp
+
+code #3 - Referencing Subform control on the main form
+
+'Referencing subform control on the main form:
+
+'place in a text box the following code
+
+ 
+=Forms!formname!subformname!Form!controlname
+

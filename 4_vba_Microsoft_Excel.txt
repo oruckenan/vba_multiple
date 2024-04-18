@@ -1,0 +1,46 @@
+code #1 - import from Excel to Access
+
+'You have to place the following code in access
+
+Private Sub Command0_Click()
+
+DoCmd.TransferSpreadsheet acImport, , "compared", "c:\Auto_Helpdesk_Proforma", True, "a1:d2"
+End Sub
+
+
+code #2 - Auto_load_on_excel
+
+Sub Auto_Open()
+frmhelpdesk.Show
+End Sub
+
+code #3 - Stop user closing the form from the top right X
+
+'Do not let user closing the form from the top right X
+ 
+
+Private Sub UserForm_QueryClose(Cancel As Integer, CloseMode As Integer)
+If CloseMode = 0 Then Cancel = True
+End Sub
+
+code #4 - Protectlock_excel_vba_code
+
+Protect/Lock Excel VBA Code
+
+http://www.ozgrid.com/VBA/protect-vba-code.htm
+
+When we write VBA code it is often desired to have the VBA Macro code not visible to end-users. This is to protect your intellectual property and/or stop users messing about with your code. Just be aware that Excel's protection ability is far from what would be considered secure. There are also many VBA Password Recovery  for sale on the www.
+
+To protect your code, open the Excel Workbook and go to Tools>Macro>Visual Basic Editor (Alt+F11). Now, from within the VBE go to Tools>VBAProject Properties and then click the Protection page tab and then check "Lock project from viewing" and then enter your password and again to confirm it. After doing this you must save, close & reopen the Workbook for the protection to take effect.
+
+The safest passwords to use are ones that use a combination of upper, lower, numbers and text. Be sure to write it down though
+
+code #5 - Hide the active workbook
+
+ActiveWindow.Visible = False
+
+'unhide it
+
+Windows("Auto_Helpdesk_Proforma.xls").Visible = True
+
+

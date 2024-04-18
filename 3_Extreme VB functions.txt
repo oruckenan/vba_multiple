@@ -1,0 +1,55 @@
+code #1 - 
+
+http://www.w3schools.com/vbscript/func_instr.asp
+
+VBScript InStr Function
+The InStr function returns the position of the first occurrence of one string within another.
+
+The InStr function can return the following values:
+
+If string1 is "" - InStr returns 0
+If string1 is Null - InStr returns Null
+If string2 is "" - InStr returns start
+If string2 is Null - InStr returns Null
+If string2 is not found - InStr returns 0
+If string2 is found within string1 - InStr returns the position at which match is found
+If start > Len(string1) - InStr returns 0
+Tip: Also look at the InStrRev function
+
+Syntax
+
+InStr([start,]string1,string2[,compare])
+
+'---------ex:1--------
+
+dim txt,pos
+txt="This is a beautiful day!"
+pos=InStr(txt,"his")
+document.write(pos)
+Output:
+2
+
+'----------ex:2-------------
+
+dim txt,pos
+txt="This is a beautiful day!"
+'A textual comparison starting at position 4
+pos=InStr(4,txt,"is",1)
+document.write(pos)
+Output:
+6
+'----------ex:3------------
+
+dim txt,pos
+txt="This is a beautiful day!"
+'A binary comparison starting at position 1
+pos=InStr(1,txt,"B",0)
+document.write(pos)
+Output:
+0
+
+
+code #2 - 
+
+code #3 - 
+

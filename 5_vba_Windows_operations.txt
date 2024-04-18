@@ -1,0 +1,68 @@
+code #3 - Deleting a file
+
+' Folder Creation
+
+'    http://www.tek-tips.com/faqs.cfm?fid=4116
+
+'    1-Check first if folder exists
+
+'    2-If none-create folder
+
+ 
+
+'***********************************************************************
+'***********************************************************************
+'*************** Check if folder exists ***************
+'***********************************************************************
+'***********************************************************************
+Private Sub Form_Open(Cancel As Integer)
+'Sub FolderExists()
+Dim fso
+Dim folder As String
+folder = "C:\DCC" ' change to match the folder path
+Set fso = CreateObject("Scripting.FileSystemObject")
+If fso.FolderExists(folder) Then
+MsgBox folder & " is a valid folder/path.", vbInformation, "Path Exists"
+Else
+MsgBox folder & " is not a valid folder/path.", vbInformation, "Invalid Path"
+End If
+'End Sub
+ 
+
+'***********************************************************************
+'***********************************************************************
+'************* Create a folder if it doesn't exist ***************
+'***********************************************************************
+'***********************************************************************
+
+'Sub CreateFolder()
+Dim fso
+Dim fol As String
+fol = "c:\DCC" ' change to match the folder path
+Set fso = CreateObject("Scripting.FileSystemObject")
+If Not fso.FolderExists(fol) Then
+fso.CreateFolder (fol)
+Else
+MsgBox fol & " already exists!", vbExclamation, "Folder Exists"
+End If
+
+End Sub
+
+code #4 - Open File Dialog Box
+
+'Open File Dialog Box
+
+Sub ShowOpenDialog()
+With Application.FileDialog(msoFileDialogOpen)
+.Show
+End With
+End Sub
+
+code #5 - Opening explorer window with VB
+
+'Opening explorer window with VB
+
+'http://www.devx.com/vb2themax/Tip/19281
+
+ Shell "explorer " & IIf(bUpwardAllowed, " /n", "") & " c:\DCC\" & sRoot, _
+vbNormalFocus
