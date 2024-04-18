@@ -1,0 +1,643 @@
+'this file includes many codes which are all standolanoe codes that you can use
+'you may connect them to ms access forms textbox etc
+
+'code #1 - Running sql query directly from visual basic super!!
+DoCmd.RunSQL ("UPDATE tblMalzeme SET tblMalzeme.MalzemeCinsi =" & "'veri yok'" & ", tblMalzeme.Malzeme_Kategori =" & "'Diðer'" & ", tblMalzeme.Birim_Olcu =" & "'Ad'" & _
+
+"WHERE (((tblMalzeme.MalzemeNo)=" & "900" & "));")
+
+'code #2 - PopUpCalendar for the date field on the forms
+
+
+'code #3 - ComboBox-Hide 1st field and view the second but write the content of the 1st field in the textbox
+
+'code #4 - Data types- Double, Long integer, Single, Decimal..
+
+'code #5 - Format Function
+
+'code #6 - Example of a function and sql query in  visual basic
+
+example of a function
+
+and example of sql query in  visual basic
+
+**********************************
+
+Option Compare Database
+--------------------------------------------------------
+
+Function fctviewresultSessId() As Integer
+'the query opens the session id table
+'only the highest value entered in the sessionid table is shown here
+'this value will be used for the future operations
+Dim RecSrcFrmSessIdLoadSql As String
+
+RecSrcFrmSessIdLoadSql = "SELECT TOP 1 [tblSessionId].[SessionId]" & _
+"FROM [tblSessionId]" & _
+"ORDER BY [tblSessionId].[SessionId] DESC;"
+Forms!frmSessionID.RecordSource = RecSrcFrmSessIdLoadSql
+
+End Function
+
+--------------------------------------------------------
+
+'here the form will show the last id pasted
+Private Sub Form_Load()
+fctviewresultSessId
+DoCmd.Requery
+End Sub
+
+'code #7 - Close form - Open form code
+
+'Open form command :
+
+Private Sub cmdFilterOwner_Click()
+
+DoCmd.OpenForm "formname"
+
+End Sub
+
+'Close form command
+
+Private Sub cmdclose_Click()
+
+DoCmd.Close acForm, "formname"
+
+End Sub
+
+'code #8 - Example of 2 different recordsource for the same form
+
+'2 different recordsource for the same form
+
+'-----------------------------------------------------------------------
+
+Option Compare Database
+
+'-----------------------------------------------------------------------
+
+Function fctGenerateSessId() As Integer
+'***************
+'opening the form with a query that takes isnull as criteris
+'this query will open the sessionid table
+Dim RecSrcFrmSessIdOpnSql As String
+
+RecSrcFrmSessIdOpnSql = "SELECT [tblSessionId].[SessionId]" & _
+"FROM [tblSessionId]" & _
+"WHERE ((([tblSessionId].[SessionId]) Is Null));"
+Me.RecordSource = RecSrcFrmSessIdOpnSql
+
+'***************
+'The new session id is pasted here into the database
+Dim txtsessYrString As String, txtSessNoStrg As String
+If Forms!frmSessionID.txtCountREcord.Value = "0" Then
+Me!txtSessionIdno.Value = Year(Date) & "-" & "00001"
+Else
+txtsessYrString = Year(Date)
+txtSessNoStrg = Format((Val(DCount("*", "tblSessionId")) + Val("1")), "00000")
+Me!txtSessionIdno.Value = txtsessYrString & "-" & txtSessNoStrg
+End If
+DoCmd.RunCommand acCmdSaveRecord
+DoCmd.Requery
+End Function
+ 
+
+'-----------------------------------------------------------------------
+
+Function fctviewresultSessId() As Integer
+'the query opens the session id table
+'only the highest value entered in the sessionid table is shown here
+'this value will be used for the future operations
+Dim RecSrcFrmSessIdLoadSql As String
+
+RecSrcFrmSessIdLoadSql = "SELECT TOP 1 [tblSessionId].[SessionId]" & _
+"FROM [tblSessionId]" & _
+"ORDER BY [tblSessionId].[SessionId] DESC;"
+Forms!frmSessionID.RecordSource = RecSrcFrmSessIdLoadSql
+
+End Function
+
+'-----------------------------------------------------------------------
+
+Private Sub cmdViewLastSessID_Click()
+'here the form will show the last id pasted
+fctviewresultSessId
+DoCmd.Requery
+End Sub
+ 
+
+'-----------------------------------------------------------------------
+
+
+Private Sub Form_Open(Cancel As Integer)
+' Before the form is previwed the new session id to be used is pastecd
+'into the session table here
+fctGenerateSessId
+
+End Sub
+ 
+
+'-----------------------------------------------------------------------
+
+
+
+
+'code #9 - Select Case and exit button/submit button validity analysis
+
+'Select Case and exit button/submit button validity analysis
+
+ 
+
+Option Compare Database
+'Programmed by Oruc Kenan Yildirim
+'Start date Friday 27 January 2006
+'http://outsideuniverse71.tripod.com
+'-------------------------------------
+Function testcheckin() As Integer
+'disabling exit button if data is already entered
+'This will force the user to hit the submit button or
+'using escape button to clear the form
+'--------------------Doc ID--------------------
+
+'............................................................................
+'///////////// Defining variables /////////////
+'............................................................................
+'-3-Verify if exit command can be applied here
+'-31-define variables
+Dim verifyobject As String, msgnullobject As Integer, quitnoentry As String, FilledAllSubmit As Integer
+'-32-verifyobject is : if any of the value is left empty
+verifyobject = IsNull(txtSessionID) Or IsNull(FrameMajotminorEffect) Or IsNull(frameEffectlongevity) Or IsNull(FrameAmelioratecomp) Or IsNull(FrameActualjob) Or IsNull(FramePojMgrSign) Or IsNull(frameClientsignature) Or IsNull(FrameApprovedstamp)
+'-33-quitnoentry is : if all the value are entered or none of them are entered
+quitnoentry = IsNull(txtSessionID) And IsNull(FrameMajotminorEffect) And IsNull(frameEffectlongevity) And IsNull(FrameAmelioratecomp) And IsNull(FrameActualjob) And IsNull(FramePojMgrSign) And IsNull(frameClientsignature) And IsNull(FrameApprovedstamp)
+'-34-Check if operator started data entry
+Select Case verifyobject
+'-341-data opereator has made incomplete data entry
+'..........................................................................................
+'///////////// data operator has made no entry in any of the textbox /////////////
+'///////////// quit permission granted /////////////
+'..........................................................................................
+Case Is = True
+Select Case quitnoentry
+'-3411-all fields are left empty
+Case Is = True
+msgnullobject = MsgBox("are you sure to quit", vbYesNo, "No data entered")
+Select Case msgnullobject
+'-34111-data operator wish to quit the document-and permission granted
+Case vbYes
+DoCmd.Close
+'-34112-data operator doesn`t want to quit
+Case vbNo
+msgnullobject = MsgBox("Quit operation cancelled by user", vbOKOnly, "COntinue your entry")
+End Select
+'-3412data entry has started entry but it is incomplete
+'............................................................................
+'///////////// data operator made some entry /////////////
+'///////////// some text box are left blank /////////////
+'............................................................................
+
+Case Is = False
+msgnullobject = MsgBox("Cannot quit: Data entry not finished", vbOKOnly, "Error")
+End Select
+'-342-data operator has entered all
+'but wish to quit without submitting document
+'............................................................................
+'///////////// data operator has filled all the document /////////////
+'///////////// but wish to quit- /////////////
+'///////////// two options: return back or submit /////////////
+'............................................................................
+
+Case Is = False
+FilledAllSubmit = MsgBox("You have filled all fields, Would you like to submit the document now?", vbYesNo, "Important")
+Select Case FilledAllSubmit
+Case vbYes
+'-13214-open the form "FileTransfer"
+DoCmd.OpenForm "frm040VersionControl"
+'-13215-Document check in hiding
+Forms!frm001DocumentCheckIn.Visible = False
+Case vbNo
+'do nothing
+End Select
+End Select
+'End of forcing the user
+
+End Function
+
+
+
+'code #10 - Form filled unfilled control and show it by color to user
+
+'Form filled unfilled control and show it by color to user
+
+Private Sub CmdSubmitCheckIn_Click()
+On Error GoTo form1_Err
+'******************************************************
+'******************************************************
+'*********** *********
+'*********** -1-Data verification *********
+'*********** *********
+'******************************************************
+'******************************************************
+
+'
+'Checking the quality of the document, is it worth to enter in DCC
+'Some documents like invoices, receipts are not worth to enter in DCC
+'Quality of the doc is primary for filtering the document
+'Here the user has to enter the document qualifications
+'the program will evaluate the entry and will guide the user
+'If the quality control is ok, then the document will be prepared for the transfer
+'............................................................................
+'///////////// -11-reset form colors /////////////
+'............................................................................
+
+Dim MyColor As Long
+MyColor = RGB(190, 190, 190)
+Me!txtSessionID.BackColor = RGB(255, 255, 255) '--------doc id
+Me!LbtMajotminorEffect1.BackColor = MyColor '--1
+Me!LbtMajotminorEffect2.BackColor = MyColor '--1
+Me!lblEffectlongevity.BackColor = MyColor '--2
+Me!lblAmelioratecomp1.BackColor = MyColor '--3
+Me!lblAmelioratecomp2.BackColor = MyColor '--3
+Me!lblActualjob1.BackColor = MyColor '--4
+Me!lblActualjob2.BackColor = MyColor '--4
+Me!lblprojmgrsignature.BackColor = MyColor '--5
+Me!lblClientsignature.BackColor = MyColor '--6
+Me!lblApprovedStamp.BackColor = MyColor '--7
+'............................................................................
+'///////////// -12-"Check in" form`s data entry error handling /////////////
+'///////////// check all the text box if any of them are left blank /////////////
+'............................................................................
+
+'-121-------------------Doc ID--------------------
+If IsNull(txtSessionID) Then
+a = MsgBox("ID Box is left empty", vbOKOnly, "Revise your entrys")
+Me!txtSessionID.BackColor = vbYellow
+End If
+'-122-------------------1--------------------
+If IsNull(FrameMajotminorEffect) Then
+a = MsgBox("Box No: 1 is left empty", vbOKOnly, "Revise your entrys")
+Me!LbtMajotminorEffect1.BackColor = vbYellow
+Me!LbtMajotminorEffect2.BackColor = vbYellow
+End If
+'-123-------------------2--------------------
+If IsNull(frameEffectlongevity) Then
+a = MsgBox("Box No: 2 is left empty", vbOKOnly, "Revise your entrys")
+Me!lblEffectlongevity.BackColor = vbYellow
+End If
+'-124-------------------3--------------------
+If IsNull(FrameAmelioratecomp) Then
+a = MsgBox("Box No: 3 is left empty", vbOKOnly, "Revise your entrys")
+Me!lblAmelioratecomp1.BackColor = vbYellow
+Me!lblAmelioratecomp2.BackColor = vbYellow
+End If
+'-125-------------------4--------------------
+If IsNull(FrameActualjob) Then
+a = MsgBox("Box No: 4 is left empty", vbOKOnly, "Revise your entrys")
+Me!lblActualjob1.BackColor = vbYellow
+Me!lblActualjob2.BackColor = vbYellow
+End If
+'-126-------------------5--------------------
+If IsNull(FramePojMgrSign) Then
+a = MsgBox("Box No: 5 is left empty", vbOKOnly, "Revise your entrys")
+Me!lblprojmgrsignature.BackColor = vbYellow
+End If
+'-127-------------------6--------------------
+If IsNull(frameClientsignature) Then
+a = MsgBox("Box No: 6 is left empty", vbOKOnly, "Revise your entrys")
+Me!lblClientsignature.BackColor = vbYellow
+End If
+'-128-------------------7--------------------
+If IsNull(FrameApprovedstamp) Then
+a = MsgBox("Box No: 7 is left empty", vbOKOnly, "Revise your entrys")
+Me!lblApprovedStamp.BackColor = vbYellow
+End If
+'all data is ok doc transfer can start
+
+
+'code #11 - Ole object dialog box contolling
+
+Ole object dialog box contolling
+
+Option Compare Database
+
+Private Sub cmdInsertFileInOleObject_Click()
+
+'******************************************************
+'******************************************************
+'*********** *********
+'***********-1- Define text box color *********
+'*********** *********
+'******************************************************
+'******************************************************
+
+
+Dim MyColor As Long
+MyColor = RGB(255, 255, 255)
+Me!cbxDocumentID.BackColor = MyColor '--------1
+'******************************************************
+'******************************************************
+'*********** *********
+'*********** inserting object processing *********
+'*********** *********
+'******************************************************
+'******************************************************
+Dim conUserCancelled As Integer
+'.............................................................
+'////////// Error message returned when user cancels ///////
+'.............................................................
+conUserCancelled = 2001
+On Error GoTo ButtonErr
+'.............................................................
+'////////// Inserting OLE document ///////////
+'.............................................................
+Dim objWord As Object
+oleFTransfDocument.SetFocus
+DoCmd.RunCommand acCmdInsertObject
+'oleFTransfDocument.InsertObjDlg
+With objWord
+
+oleFTransfDocument.OLETypeAllowed = acOLELinked
+' Specify source file.
+oleFTransfDocument.SourceDoc = "C:\"
+oleFTransfDocument.Action = acOLECreateFromFile
+' Create linked object.
+oleFTransfDocument.Action = acOLECreateLink
+oleFTransfDocument.Action = acolelocate
+
+' Adjust control size.
+oleFTransfDocument.SizeMode = acOLESizeZoom
+End With
+'.............................................................
+'////////// Error message returned when user cancels OLE inserting ///////
+'.............................................................
+ButtonErr:
+If Err = conUserCancelled Then ' Display message.
+Status = MsgBox("You clicked the Cancel button; " & "no object was created.", vbOKOnly, "Cancelled")
+
+End If
+Resume Next
+
+End Sub
+
+'code #12 - common dialog box
+
+'----- 1 -----------
+Sub Main()
+
+    'Declare a variable as a FileDialog object.
+    Dim fd As FileDialog
+
+    'Create a FileDialog object as a File Picker dialog box.
+    Set fd = Application.FileDialog(msoFileDialogFilePicker)
+
+    'Declare a variable to contain the path
+    'of each selected item. Even though the path is a String,
+    'the variable must be a Variant because For Each...Next
+    'routines only work with Variants and Objects.
+    Dim vrtSelectedItem As Variant
+
+    'Use a With...End With block to reference the FileDialog object.
+    With fd
+
+        'Use the Show method to display the File Picker dialog box and return the user's action.
+        'The user pressed the action button.
+        If .Show = -1 Then
+
+            'Step through each string in the FileDialogSelectedItems collection.
+            For Each vrtSelectedItem In .SelectedItems
+
+                'vrtSelectedItem is a String that contains the path of each selected item.
+                'You can use any file I/O functions that you want to work with this path.
+                'This example simply displays the path in a message box.
+                MsgBox "The path is: " & vrtSelectedItem
+
+            Next vrtSelectedItem
+        'The user pressed Cancel.
+        Else
+        End If
+    End With
+
+    'Set the object variable to Nothing.
+    Set fd = Nothing
+
+End Sub
+
+'------- 2 ----------
+
+'******************************************************
+
+'********************************************************
+
+'******************************************************
+
+'************** WinAPI function **************
+
+'http://www.shrinkwrapvb.com/avihelp/avihlp_1.htm
+
+'Feel free to replace cFileDlg.cls class with the VB Common Dialog ocx if
+
+' you really want to
+
+'The AVIFileOpen function accepts the same OF flags as the OpenFile API 
+
+' function
+
+ 
+
+Dim res As Long 'result code
+Dim ofd As cFileDlg 'OpenFileDialog class
+Dim szFile As String 'filename
+
+'Get the name of an AVI file to work with
+Set ofd = New cFileDlg
+With ofd
+    .OwnerHwnd = Me.hWnd
+    .Filter = "AVI Files|*.avi"
+    .DlgTitle = "Open AVI File"
+End With
+res = ofd.VBGetOpenFileName(szFile)
+If res = False Then GoTo ErrorOut
+
+ErrorOut:
+    If pAVIFile <> 0 Then
+        Call AVIFileRelease(pAVIFile) '// closes the file
+    End If
+
+    If (rc <> AVIERR_OK) Then 'if there was an error then show feedback to user
+        MsgBox "There was an error working with the file:" _
+                & vbCrLf & szFile, vbInformation, App.Title
+    End If
+
+'******************************************
+
+'For our simple test program, put the following line of code in Form_Load:
+
+Call AVIFileInit '// opens AVIFile library
+
+'And put the following line of code in Form_Unload:
+
+Call AVIFileExit '// releases AVIFile library
+
+'******************************************
+
+' The next step is to be able to open the AVI file that the user selects from the common dialog and get a PAVIFILE handle which can be passed to other AVIFile functions as necessary.  We use the AVIFileOpen function to do this.  Add these 2 lines of code to the command button click event
+
+Dim pAVIFile as Long 'pointer to AVI File (PAVIFILE handle)
+
+res = AVIFileOpen(pAVIFile, szFile, OF_SHARE_DENY_WRITE, 0&)
+
+ 
+ 
+ 
+'code #13 - Autonumbering
+
+
+'code #14 - Compact and repair a database while it is open
+
+'Compact and repair a database while it is open
+
+'http://www.pcreview.co.uk/forums/thread-1148188.php
+
+Private Sub CompactDB_Click()
+On Error GoTo Err_CompactDB_Click
+
+CommandBars("Menu Bar"). _
+Controls("Tools"). _
+Controls("Database utilities"). _
+Controls("Compact and repair database..."). _
+accDoDefaultAction
+
+Exit_CompactDB_Click:
+Exit Sub
+
+Err_CompactDB_Click:
+MsgBox Err.Description
+Resume Exit_CompactDB_Click
+
+End Sub
+
+
+'code #15 - Record Number
+
+'code #16 - ApplyFilter by form
+
+'ApplyFilter example
+
+ DoCmd.ApplyFilter, "FieldName"
+
+ DoCmd.ApplyFilter , "SessionNumber Like '*" & hlpdskSessNo & "*'"
+ 
+
+or
+
+ DoCmd.ApplyFilter , "SessionNumber" & hlpdskSessNo
+
+ 
+
+or
+
+MalzemeNo is a text box where filter be applied on , text20 is a combo box where I make the selection:
+
+Forms![frmMalzemeTakip].Form.Filter = " MalzemeNo = " & Me.Text20.Column(0)
+
+Forms![frmMalzemeTakip].Form.FilterOn = True
+
+
+'code #17 - Test your query for records
+
+'By using Dmax
+
+' from: http://experts.about.com/q/Using-MS-Access-1440/Conditional-macros-number-records.htm
+
+' Here is an IF construct that will test your query for records, then enable you to action alternative queries according to the outcome of the initial condition
+
+If Len(DMax("FieldName", "QueryTestName")) > 0 Then
+
+DoCmd.OpenQuery "QueryConditionTrue", acViewNormal
+Else
+DoCmd.OpenQuery "QueryConditionFalse", acViewNormal
+End
+
+
+'A little explanation:
+' QueryTestName - this is the query which decides which action needs to be taken..
+' FieldName - is any field in the above query, which we can use foor checking the presence of records
+
+' DMax() function - returns a single record containing the maximum (numeric or alpha) of a field.
+
+' Len() function - returns the length of a string - so if DMax() returns a value (ie. there are records), then the length will be > 0, otherwise, if no records, DMax() returns 'Null' and the Len() will be 0 - so this is a good set of functions to use for testing for records or no records.
+
+' by using recordset recordcount
+
+' from : http://www.tek-tips.com/viewthread.cfm?qid=1218083&page=1
+
+Private Sub Form_Open(Cancel As Integer)
+Dim strRecError
+
+If Me.RecordSource <> "" Then
+    If Me.Recordset.RecordCount = 0 Then
+        strRecError = "No Records. "
+    End If
+Else
+    strRecError = "No recordset. "
+End If
+If strRecError <> "" Then
+    If MsgBox(strRecError & "Continue?", vbYesNo) = vbNo Then
+        Cancel = True
+    End If
+End If
+End Sub
+
+'Example 2
+
+Me!Recordset.MoveFirst
+DoCmd.SetWarnings False
+If Forms!frmhelpdesk1ProformaCompletion.Recordset.RecordCount = 0 Then
+MsgBox "No orders were found for " & Me!CustomerReq, vbOKCancel, "Try Again"
+DoCmd.Close acForm, "frmhelpdesk1ProformaCompletion"
+'GoTo exit_cmdTotals_Click
+End If
+ 
+
+ 
+
+'code #18 - Check if form is open
+
+'1
+
+' http://www.thescripts.com/forum/thread205622.html by Trevor Best
+
+Private Sub Command90_Click()
+isopen = SysCmd(acSysCmdGetObjectState, acForm, "frmoperator")
+
+If isopen = "1" Then
+a = MsgBox("hourra" & isopen, vbOKOnly, "leb")
+Else
+a = MsgBox("noporo" & isopen, vbOKOnly, "hopa")
+End If
+End Sub
+ 
+
+'2
+
+' http://www.thescripts.com/forum/thread566852.html by Tanis
+' Re: vb to check form is open
+
+' Courtesey of the Dev Ashish web site.
+
+' Pass the form name to the following function. Function will return True if form is open and False if it's not.
+
+'****** Code Start ********
+Function fIsLoaded(ByVal strFormName As String) As Integer
+'Returns a 0 if form is not open or a -1 if Open
+If SysCmd(acSysCmdGetObjectState, acForm, "frmoperator") <> 0 Then
+If Forms("frmoperator").CurrentView <> 0 Then
+fIsLoaded = True
+End If
+End If
+End Function
+'****** Code End ********
+
+
+
+'rem - Create your own Icon and Title bar: The title bar and icon options are 
+'set from the tools - start up menu item. Just select the icon 
+'and type in your Application title
